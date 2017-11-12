@@ -1,5 +1,7 @@
 package de.aboutflash.archerytime.client.main;
 
+import de.aboutflash.archerytime.client.model.CountdownModel;
+import de.aboutflash.archerytime.client.ui.CountDownScreen;
 import de.aboutflash.archerytime.client.ui.StopScreen;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 public class ArcheryTime extends Application {
 
   private final static Rectangle2D DEFAULT_SIZE = new Rectangle2D(0.0, 0.0, 480.0, 320.0);
+  private final Pane rootPane = new StackPane();
   private Stage primaryStage = null;
 
   public static void main(final String... args) {
@@ -27,19 +30,17 @@ public class ArcheryTime extends Application {
     primaryStage.setWidth(DEFAULT_SIZE.getWidth());
     primaryStage.setHeight(DEFAULT_SIZE.getHeight());
 
-    final Pane rootPane = new StackPane();
     final Scene rootScene = new Scene(rootPane);
     primaryStage.setScene(rootScene);
     primaryStage.show();
 
-    rootPane.getChildren().add(new StopScreen());
-
     registerHotKeys();
     enterFullScreenMode();
+    showStop();
   }
 
   private void registerHotKeys() {
-    // fullscreen
+    // fullscreen F
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
       if (!primaryStage.isFullScreen() && event.getCode() == KeyCode.F) {
         enterFullScreenMode();
@@ -47,7 +48,7 @@ public class ArcheryTime extends Application {
       }
     });
 
-    // exit
+    // exit Ctrl-Alt-X
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
       if (event.getCode() == KeyCode.X
           && event.isControlDown()
@@ -55,9 +56,27 @@ public class ArcheryTime extends Application {
         Platform.exit();
       }
     });
+
+    // start SPACE
+    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+      if (event.getCode() == KeyCode.SPACE)
+        showCountdown();
+    });
   }
 
   private void enterFullScreenMode() {
     primaryStage.setFullScreen(true);
+  }
+
+  private void showStop() {
+    rootPane.getChildren().add(new StopScreen());
+  }
+
+  private void showCountdown() {
+    final CountDownScreen countDownScreen = new CountDownScreen();
+    final CountdownModel countDownModel = new CountdownModel();
+    countDownScreen.setCountdownModel(countDownModel);
+    rootPane.getChildren().setAll(countDownScreen);
+    countDownModel.startSequence();
   }
 }
