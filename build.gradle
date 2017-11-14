@@ -20,8 +20,6 @@ dependencies {
 }
 
 
-def generatedSourcesHome = 'src/main/generated'
-
 subprojects {
   apply plugin: 'java'
 

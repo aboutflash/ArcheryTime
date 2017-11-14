@@ -9,6 +9,7 @@ targetCompatibility = '1.8'
 mainClassName = 'de.aboutflash.archerytime.ArcheryTime'
 
 repositories {
+  mavenLocal()
   mavenCentral()
 }
 
@@ -17,7 +18,6 @@ tasks.withType(Exec) {
     println commandLine
   }
 }
-
 
 dependencies {
   // Internal dependencies
@@ -28,7 +28,6 @@ dependencies {
   compile COMMONS_LANG3_DEP
 
   // TOOLING DEPENDENCIES
-  compile JSASS_DEP
   testCompile HAMCREST_CORE_DEP
   testCompile JUNIT_DEP
   testCompile LOGBACK_CLASSIC_DEP
@@ -38,8 +37,6 @@ dependencies {
   testCompile TESTFX_JUNIT_DEP
   testCompile TRUTH_DEP
 
-// https://mvnrepository.com/artifact/io.bit3/jsass
-  compile group: 'io.bit3', name: 'jsass', version: '5.5.3'
 }
 
 /**
@@ -49,43 +46,105 @@ compileJava {
   options.encoding = "UTF-8"
 }
 
-///**
-// * Compile scss to css.
-// */
-//task compileSCSS {
-//  final URI inputFile = file("src/main/java/de/aboutflash/archerytime/client/main/main.scss").toURI()
-//  final URI outputFile = file("src/main/generated/css/main.css").toURI()
-//
-//  final Compiler compiler = new Compiler()
-//  final Options options = new Options()
-//  final Output output = compiler.compileFile(inputFile, outputFile, options)
-//
-//  // Remove the charset declaration that confuses the JavaFX CSS parser.
-//  final String css = output.getCss().replace("@charset \"UTF-8\";", "")
-//
-//  // Note: At this point, outputFile does not yet exist. So write it now...
-//  def target = Paths.get(outputFile)
-//  Files.createDirectories(target.parent)
-//  Files.write(target, css.getBytes(StandardCharsets.UTF_8))
-//
-//}
+apply plugin: 'java'
+apply plugin: 'com.github.fgiannesini.libsass.gradle.plugin'
 
-/**
- * compass watcher task.
- *
- * Start compassWatch with:
- * `./gradlew compassWatch -t`
- */
-task compassWatch {
-  doLast {
-    compileSCSS
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+  dependencies {
+    classpath LIBSASS_DEP
   }
 }
 
-compassWatch {
-  inputs.files fileTree(dir: 'src/main/java', include: '**/*.scss')
+//Relative paths from resources can be used if target directory already exists, otherwise absolute path from project root should be used.
+libSassParameters {
+  //Type: String Mandatory
+  //File path to compile (normally import other scss files)
+  //Can be overridden for production task
+  inputFilePath = "frontend/src/main/java/de/aboutflash/archerytime/client/scss/main.scss"
+
+  //Type: String Mandatory
+  //Compiled file path
+  //Can be overridden for production task
+  outputFilePath = "frontend/src/main/resources/css/main.css"
+
+  //Directory to watch for continuous compilation
+  watchedDirectoryPath = "frontend/src/main/java/de/aboutflash/archerytime/client/"
+
+  //Type: Boolean Default: false
+  //'true' embeds the source map as a data URI
+  //Can be overridden for production task
+  sourceMapEmbed = false
+
+  //Type: Boolean Default: false
+  //'true' enables additional debugging information in the output file as CSS comments
+  //Can be overridden for production task
+  //sourceComments = false
+
+  //Type: Boolean Default: false
+  //'true' values disable the inclusion of source map information in the output file
+  //Can be overridden for production task
+  //omitSourceMappingURL = false
+
+  //Type: Boolean Default: false
+  //'true' includes the contents in the source map information
+  //Can be overridden for production task
+  //sourceMapContents = false
+
+  //Type: String Default: 'scss'
+  //Input syntax 'scss' or 'sass'
+  //Can be overridden for production task
+  //inputSyntax "scss"
+
+  //Type: Integer Default: 5
+  //Used to determine how many digits after the decimal will be allowed. For instance, if you had a decimal number of 1.23456789 and a precision of 5, the result will be 1.23457 in the final CSS.
+  //Can be overridden for production task
+  //precision 5
+
+  //Type: String
+  //Path of source file to generate if not embedded
+  //Can be overridden for production task
+  //sourceMapFilePath "css/output.css.map"
+
+  //Type: String Default: nested Values: nested, expanded, compact, compressed
+  //Determines the output format of the final CSS style.
+  //Can be overridden for production task
+  //outputStyle "nested"
+
+  //Type: String Default: ""
+  //Paths that LibSass can look in to attempt to resolve your @import declarations. When using data, it is recommended that you use this.
+  //';' is the path separator for Windows
+  //':' is the path separator for Linux
+  //Can be overridden for production task
+  //includePaths "scss-lib"
+
+  //Type: String
+  //Installation folder for bourbon sources
+  bourbonInstallationPath "scss"
+
+  //Type: String
+  //If a specific version of bourbon is necessary
+  //bourbonVersion "4.2.6"
+
+  //Type: String
+  //Installation folder for compass sources
+  compassInstallationPath "src/main/resources/scss"
+
+  //Type: String
+  //If a specific version of compass is necessary
+  //compassVersion "1.0.3"
+
+  //Override parameters for task "compileLibSassProduction"
+  libSassProductionParameters {
+    outputStyle "compressed"
+
+    outputFilePath = "frontend/src/main/generated/css/main.css"
+  }
 }
 
 assemble.doLast {
-  compileSCSS
+  compileLibSass
 }
