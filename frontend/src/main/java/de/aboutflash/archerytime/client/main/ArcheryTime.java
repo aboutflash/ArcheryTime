@@ -1,6 +1,7 @@
 package de.aboutflash.archerytime.client.main;
 
 import de.aboutflash.archerytime.client.model.CountdownModel;
+import de.aboutflash.archerytime.client.model.StateMachine;
 import de.aboutflash.archerytime.client.ui.CountDownScreen;
 import de.aboutflash.archerytime.client.ui.StopScreen;
 import javafx.application.Application;
@@ -18,6 +19,8 @@ public class ArcheryTime extends Application {
 
   private final static Rectangle2D DEFAULT_SIZE = new Rectangle2D(0.0, 0.0, 480.0, 320.0);
   private final Pane rootPane = new StackPane();
+  private final CountdownModel countdownModel = new CountdownModel();
+  private final StateMachine csm = new StateMachine(countdownModel);
   private Stage primaryStage = null;
 
   public static void main(final String... args) {
@@ -34,8 +37,10 @@ public class ArcheryTime extends Application {
     primaryStage.setScene(rootScene);
     primaryStage.show();
 
+    setUserAgentStylesheet("css/main.css");
+
     registerHotKeys();
-    enterFullScreenMode();
+//    enterFullScreenMode();
     showStop();
   }
 
@@ -74,9 +79,9 @@ public class ArcheryTime extends Application {
 
   private void showCountdown() {
     final CountDownScreen countDownScreen = new CountDownScreen();
-    final CountdownModel countDownModel = new CountdownModel();
-    countDownScreen.setCountdownModel(countDownModel);
+    countDownScreen.setCountdownModel(countdownModel);
     rootPane.getChildren().setAll(countDownScreen);
-    countDownModel.startSequence();
+
+    csm.startCountdown();
   }
 }
