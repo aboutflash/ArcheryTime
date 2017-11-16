@@ -1,5 +1,6 @@
 package de.aboutflash.archerytime.client.model;
 
+import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -19,19 +20,24 @@ import static com.google.common.base.Preconditions.checkState;
 @SuppressWarnings("WeakerAccess") // public constants for testing reasons
 public class CountdownModel {
 
-  private static final int INTERVAL_MILLIS = 200;
+  private static final long INTERVAL_MILLIS = 50L; // interval for the internal timer clock
+  private static final double SPEED_FACTOR = 1.0; // for less boring debugging
+  private static final double STEP_WIDTH = (double) INTERVAL_MILLIS / 1_000.0d; // fraction of second to subtract
+  private static final double OPTICAL_ADDITION_SECONDS = 0.95; // used to create the illusion the 000 is actually the end of the countdown
 
-  public static final int DEFAULT_WARM_UP_SECONDS = 5;
-  public static final int DEFAULT_TURN_SWAP_SECONDS = 15;
-  public static final int DEFAULT_SHOOTING_SECONDS = 30;
+  public static final double DEFAULT_WARM_UP_SECONDS = 10.0;
+  public static final double DEFAULT_TURN_SWAP_SECONDS = 30.0;
+  public static final double DEFAULT_SHOOTING_SECONDS = 120.0;
 
-  private final LinkedList<String> turns = new LinkedList<>(FXCollections.observableArrayList("A B", "C D"));
+  private final LinkedList<String> turns = new LinkedList<>(FXCollections.observableArrayList("A B", "C D", "E F"));
   private final BooleanProperty running = new SimpleBooleanProperty(false);
-  private final IntegerProperty warmUpSeconds = new SimpleIntegerProperty(DEFAULT_WARM_UP_SECONDS);
-  private final IntegerProperty shootingSeconds = new SimpleIntegerProperty(DEFAULT_SHOOTING_SECONDS);
-  private final IntegerProperty turnSwapSeconds = new SimpleIntegerProperty(DEFAULT_TURN_SWAP_SECONDS);
-  private final IntegerProperty currentCountdownSeconds = new SimpleIntegerProperty(0);
+  private final DoubleProperty warmUpSeconds = new SimpleDoubleProperty(DEFAULT_WARM_UP_SECONDS);
+  private final DoubleProperty shootingSeconds = new SimpleDoubleProperty(DEFAULT_SHOOTING_SECONDS);
+  private final DoubleProperty turnSwapSeconds = new SimpleDoubleProperty(DEFAULT_TURN_SWAP_SECONDS);
+  private final DoubleProperty currentCountdownSeconds = new SimpleDoubleProperty(0.0);
   private final StringProperty currentTurn = new SimpleStringProperty(turns.getFirst());
+  private final StringProperty pattern = new SimpleStringProperty("000");
+
   private TimerTask countTask;
 
 
@@ -47,53 +53,71 @@ public class CountdownModel {
     running.set(value);
   }
 
-  public IntegerProperty warmUpSecondsProperty() {
+
+  public DoubleProperty warmUpSecondsProperty() {
     return warmUpSeconds;
   }
 
-  public int getWarmUpSeconds() {
+  public double getWarmUpSeconds() {
     return warmUpSeconds.get();
   }
 
-  public void setWarmUpSeconds(final int seconds) {
+  public void setWarmUpSeconds(final double seconds) {
     warmUpSeconds.set(seconds);
   }
 
-  public IntegerProperty shootingSecondsProperty() {
+
+  public DoubleProperty shootingSecondsProperty() {
     return shootingSeconds;
   }
 
-  public int getShootingSeconds() {
+  public double getShootingSeconds() {
     return shootingSeconds.get();
   }
 
-  public void setShootingSeconds(final int seconds) {
+  public void setShootingSeconds(final double seconds) {
     shootingSeconds.set(seconds);
   }
 
-  public IntegerProperty turnSwapSecondsProperty() {
+
+  public DoubleProperty turnSwapSecondsProperty() {
     return turnSwapSeconds;
   }
 
-  public int getTurnSwapSeconds() {
+  public double getTurnSwapSeconds() {
     return turnSwapSeconds.get();
   }
 
-  public void setTurnSwapSeconds(final int seconds) {
+  public void setTurnSwapSeconds(final double seconds) {
     turnSwapSeconds.set(seconds);
   }
 
-  public IntegerProperty currentCountdownSecondsProperty() {
+
+  public DoubleProperty currentCountdownSecondsProperty() {
     return currentCountdownSeconds;
   }
 
-  public int getCurrentCountdownSeconds() {
+  public double getCurrentCountdownSeconds() {
     return currentCountdownSeconds.get();
   }
 
-  private void setCurrentCountdownSeconds(final int currentCountdownSeconds) {
-    this.currentCountdownSeconds.set(currentCountdownSeconds);
+  private void updateCurrentCountdownSeconds(final double seconds) {
+    currentCountdownSeconds.set(seconds);
   }
+
+
+  public String getPattern() {
+    return pattern.get();
+  }
+
+  public StringProperty patternProperty() {
+    return pattern;
+  }
+
+  public void setPattern(final String pattern) {
+    this.pattern.set(pattern);
+  }
+
 
   public String getCurrentTurn() {
     return currentTurn.get();
@@ -103,8 +127,8 @@ public class CountdownModel {
     return currentTurn;
   }
 
-  public void setCurrentTurn(final String currentTurn) {
-    this.currentTurn.set(currentTurn);
+  public void setCurrentTurn(final String turn) {
+    currentTurn.set(turn);
   }
 
   public void nextTurn() {
@@ -119,7 +143,7 @@ public class CountdownModel {
 
   final Timer timer = new Timer(true);
 
-  public void startCounting(int startSeconds) {
+  public void startCounting(final double startSeconds) {
     checkState(!isRunning(), "Cannot start over an already running timer");
     initCountdownTimer(startSeconds);
     setRunning(true);
@@ -127,18 +151,15 @@ public class CountdownModel {
       @Override
       public void run() {
         Platform.runLater(() -> {
-          setCurrentCountdownSeconds(getCurrentCountdownSeconds() - 1);
-          if (getCurrentCountdownSeconds() <= 0)
+          updateCurrentCountdownSeconds(getCurrentCountdownSeconds() - STEP_WIDTH);
+          if (getCurrentCountdownSeconds() <= 0.0) {
+            updateCurrentCountdownSeconds(0.0);
             cancel();
+          }
         });
       }
-
-      @Override
-      public boolean cancel() {
-        return super.cancel();
-      }
     };
-    timer.scheduleAtFixedRate(countTask, INTERVAL_MILLIS, INTERVAL_MILLIS);
+    timer.scheduleAtFixedRate(countTask, INTERVAL_MILLIS, Math.round((double) INTERVAL_MILLIS * (1.0 / SPEED_FACTOR)));
   }
 
   public void pause() {
@@ -164,19 +185,26 @@ public class CountdownModel {
       countTask.cancel();
   }
 
-  private void initCountdownTimer(int startSeconds) {
-    setCurrentCountdownSeconds(startSeconds);
+  private void initCountdownTimer(final double startSeconds) {
+    updateCurrentCountdownSeconds(startSeconds + OPTICAL_ADDITION_SECONDS);
+
+    // digits of the new initial value
+    final int length = String.valueOf((int) startSeconds).length();
+    setPattern(Strings.repeat("0", length));
   }
 
   @Override
   public String toString() {
     return "CountdownModel{" +
-        "running=" + running +
+        "turns=" + turns +
+        ", running=" + running +
         ", warmUpSeconds=" + warmUpSeconds +
         ", shootingSeconds=" + shootingSeconds +
         ", turnSwapSeconds=" + turnSwapSeconds +
         ", currentCountdownSeconds=" + currentCountdownSeconds +
+        ", currentTurn=" + currentTurn +
+        ", countTask=" + countTask +
+        ", timer=" + timer +
         '}';
   }
-
 }

@@ -18,11 +18,16 @@ public class StateMachine implements ClockState {
     this.countdownModel = countdownModel;
     initStatesEnum();
     reset();
-    this.countdownModel.currentCountdownSecondsProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.equals(0)) {
+
+    countdownModel.currentCountdownSecondsProperty().addListener((observable, oldValue, newValue) -> {
+      if (isCountdownFinished((double) newValue)) {
         finishCountdown();
       }
     });
+  }
+
+  private static boolean isCountdownFinished(final double value) {
+    return value <= 0.0;
   }
 
   private void transition(ClockState to) {
