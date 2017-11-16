@@ -1,5 +1,16 @@
-apply plugin: 'java'
-sourceCompatibility = 1.8
+apply plugin: 'net.nemerosa.versioning'
+
+versioning {
+  releaseMode = 'snapshot'
+  releaseParser = { scmInfo, separator = '-' ->
+    List<String> part = scmInfo.branch.split('-', 2) + ''
+    new net.nemerosa.versioning.ReleaseInfo(type: part[0], base: part[1])
+  }
+}
+
+group 'de.aboutflash.archerytime'
+version versioning.info.display
+
 
 apply plugin: 'idea'
 idea {
@@ -9,30 +20,187 @@ idea {
   }
 }
 
-repositories {
-  mavenLocal()
-  mavenCentral()
-}
+def generatedSourcesHome = 'src/main/generated'
 
-dependencies {
-  testCompile group: 'junit', name: 'junit', version: '4.12'
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+  }
+
+  dependencies {
+    classpath COMMONS_LANG3_DEP
+    classpath GROOVY_ALL_DEP
+    classpath VERSIONING_DEP
+  }
 }
 
 allprojects {
   repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
   }
 
-  dependencies {}
+  //  apply plugin: "checkstyle"
+  //
+  //  checkstyle {
+  //    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+  //    configProperties = ['baseDir': "$rootProject.projectDir"]
+  //  }
+  //
+  //  dependencies {
+  //    checkstyle CHECKSTYLE_DEP
+  //    checkstyle CHECKSTYLE_IDEA_EXTENSION_DEP
+  //  }
 }
 
 
 subprojects {
   apply plugin: 'java'
+  sourceCompatibility = 1.8
 
   compileJava.options.encoding = 'UTF-8'
   tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
   }
+
+  // Allow to show whole dependency tree of all sub-modules
+  task allDependencies(type: DependencyReportTask) {}
+
+  dependencies {
+    testCompile project(':frontend')
+
+    compile JSR305_DEP
+
+    testCompile JUNIT_DEP
+    testCompile LOGBACK_CLASSIC_DEP
+    testCompile HAMCREST_ALL_DEP
+    testCompile MOCKITO_ALL_DEP
+  }
+
+  sourceSets {
+    main {
+      java { srcDir "src/main/generated" }
+      resources {
+        srcDirs('src/main/resources', 'src/main/java', 'src/main/generated')
+        include '**/*.avro'
+        include '**/*.xml'
+        include '**/*.json'
+        include '**/*.properties'
+        include '**/*.yaml'
+        include '**/*.wsdl'
+        include '**/*.xsd'
+        include '**/*.html'
+        include '**/*.js'
+        include '**/*.css'
+        include '**/*.fxml'
+        include '**/*.png'
+        include '**/*.jpg'
+        include '**/*.gif'
+        include '**/*.ttf'
+        include '**/*.otf'
+        include '**/*.woff'
+        include '**/*.woff2'
+        include '**/*.raw'
+        include '**/*.sql'
+        include '**/*.key'
+        include '**/passwords.txt'
+      }
+    }
+
+    test {
+      resources {
+        srcDirs('src/test/resources', 'src/test/java')
+        include '**/*.xml'
+        include '**/*.json'
+        include '**/*.properties'
+        include '**/*.fxml'
+        include '**/*.css'
+        include '**/*.png'
+        include '**/*.jpg'
+        include '**/*.gif'
+        include '**/*.ttf'
+        include '**/*.otf'
+        include '**/*.woff'
+        include '**/*.woff2'
+        include '**/*.raw'
+        include '**/*.sql'
+        include '**/*.txt'
+        include '**/*.key'
+      }
+    }
+  }
+
+  task sourceJar(type: Jar) {
+    from sourceSets.main.java
+    from sourceSets.main.resources
+
+    classifier = 'sources'
+  }
+
+  task javadocJar(type: Jar) {
+    from sourceSets.main.java
+    from sourceSets.main.resources
+
+    classifier = 'javadoc'
+  }
+
+  tasks.withType(Exec) {
+    doFirst {
+      println commandLine
+    }
+  }
+
+  artifacts {
+    archives sourceJar
+  }
+
+  tasks.withType(Test) {
+    // Please proceed executing to build even if some tests fail.
+    test.ignoreFailures = true
+
+    reports {
+      html.destination = file("$buildDir/reports/tests")
+      junitXml.destination = file("$buildDir/test-results")
+    }
+
+    // Switch logging during test execution on and off by setting the variable showTestLog
+    // like so -PshowTestLog=false. Default is defined in gradle.properties.
+    testLogging {
+      events "passed", "failed", "skipped"
+      showStandardStreams "true".equalsIgnoreCase(showTestLog)
+    }
+
+    useJUnit {
+      forkEvery = 1
+
+      int numCores = Runtime.getRuntime().availableProcessors()
+
+      // since most modern CPUs use SMT if they report more than two cores, scale the CPU count
+      // according to the avg gain of SMT. For Intel CPUs this is between 20-30%.
+      // So a hyperthreading Core i7 reporting 8 Cores is actually a quad core with 2thread/core.
+      // It performs like a 4-6 Core CPU however (mostly around 5 though). Taking the raw reported
+      // CPU count for maxParallelForks would oversubscribe the CPU. Tests would run slower than
+      // they have to.
+      if (numCores > 2) {
+        numCores *= 0.6
+      }
+
+      maxParallelForks = numCores
+    }
+
+    jvmArgs '-ea'
+    jvmArgs '-Xmx3G'
+  }
+
+  /**
+   * Extend clean to flush out reports outside build
+   */
+  clean.doLast({
+    file(generatedSourcesHome).deleteDir()
+  })
+
+
 }

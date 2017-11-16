@@ -1,17 +1,34 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.bit3.jsass.Compiler
+import io.bit3.jsass.Options
+import io.bit3.jsass.Output
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
+
 group 'de.aboutflash.archerytime'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-mainClassName = 'de.aboutflash.archerytime.ArcheryTime'
+mainClassName = 'de.aboutflash.archerytime.client.main.ArcheryTime'
 
 repositories {
   mavenLocal()
   mavenCentral()
+  jcenter()
 }
+
+configurations {
+  all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+  all*.exclude group: 'log4j', module: 'log4j'
+}
+
 
 tasks.withType(Exec) {
   doFirst {
@@ -19,24 +36,23 @@ tasks.withType(Exec) {
   }
 }
 
-dependencies {
-  // Internal dependencies
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+  }
 
-  // Utilities
-  // For logging
-  compile REFLECTIONS_DEP
-  compile COMMONS_LANG3_DEP
+  dependencies {
+    classpath JSASS_DEP
+    classpath SHADOW_DEP
+  }
+}
 
-  // TOOLING DEPENDENCIES
-  testCompile HAMCREST_CORE_DEP
-  testCompile JUNIT_DEP
-  testCompile LOGBACK_CLASSIC_DEP
-  testCompile MOCKITO_CORE_DEP
-  testCompile OPENJFX_MONOCLE_DEP
-  testCompile TESTFX_CORE_DEP
-  testCompile TESTFX_JUNIT_DEP
-  testCompile TRUTH_DEP
-
+tasks.withType(Exec) {
+  doFirst {
+    println commandLine
+  }
 }
 
 /**
@@ -46,105 +62,139 @@ compileJava {
   options.encoding = "UTF-8"
 }
 
-apply plugin: 'java'
-apply plugin: 'com.github.fgiannesini.libsass.gradle.plugin'
+dependencies {
+  // Internal dependencies
+  // compile project(':public-model-api')
 
-buildscript {
-  repositories {
-    mavenLocal()
-    mavenCentral()
+  // Utilities
+  compile COMMONS_LANG3_DEP
+
+  // For CLI parsing
+  compile COMMONS_CLI_DEP
+
+  // For logging
+  compile REFLECTIONS_DEP
+
+  // Used by LicenseService
+  // compile HTTPCLIENT_DEP
+  // compile JSON_DEP
+
+  compile files('extralibs/install4j/install4j-runtime-6.1.5.jar')
+
+  // TOOLING DEPENDENCIES
+  testCompile HAMCREST_CORE_DEP
+  testCompile HIBERNATE_VALIDATOR_DEP
+  testCompile JUNIT_DEP
+  testCompile LOG4J_OVER_SLF4J_DEP
+  testCompile LOGBACK_CLASSIC_DEP
+  testCompile MOCKITO_CORE_DEP
+  testCompile OPENJFX_MONOCLE_DEP
+  testCompile TESTFX_CORE_DEP
+  testCompile TESTFX_JUNIT_DEP
+  testCompile TRUTH_DEP
+}
+
+/**
+ * Ensure default
+ */
+compileJava {
+  options.encoding = "UTF-8"
+}
+
+tasks.withType(Test) {
+  environment JAVA_OPTS: "-Xms512m -Xmx4G"
+
+  systemProperty 'quantum.verbose', 'false'
+  systemProperty 'Dquantum.pulse', 'false'
+  systemProperty 'javafx.verbose', 'false'
+  systemProperty 'prism.verbose', 'false'
+
+  systemProperty 'testfx.robot', 'glass'
+  // See https://wiki.openjdk.java.net/display/OpenJFX/Monocle
+  systemProperty 'glass.platform', 'Monocle'
+  systemProperty 'monocle.platform', 'Headless'
+  systemProperty 'prism.order', 'sw'
+
+  systemProperty 'headless.geometry', '1920x1080'
+  systemProperty 'com.sun.javafx.fontSize', '12'
+  systemProperty 'com.sun.javafx.screenDPI', '96'
+
+  systemProperty 'prism.debugfonts', 'false'
+  systemProperty 'javafx.pulseLogger', 'false'
+}
+
+/**
+ * Build one uber jar containing the complete spc client. Because we have to include
+ * JAXB libraries into this code where each has an equally named configuration file into
+ * their META-INF folder, we need to merge those files into one. That is the reason why
+ * the shadow plugin was introduced for building the jar instead of the default jar plugin.
+ *
+ * And, besides that, it excludes all cryptographic signature files by default.
+ */
+task fatJar(type: ShadowJar, dependsOn: ['assemble', 'classes']) {
+  archiveName = "archerytime.jar"
+
+  manifest {
+    attributes "Main-Class": "de.aboutflash.archerytime.client.main.ArcheryTime"
   }
-  dependencies {
-    classpath LIBSASS_DEP
+
+  from sourceSets.main.output.classesDirs
+  from sourceSets.main.output.resourcesDir
+  from {
+    project.configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+
+  entryCompression ZipEntryCompression.DEFLATED
+  exclude '**/*.log', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+
+  mergeServiceFiles {
+    path = 'META-INF/cxf'
   }
 }
 
-//Relative paths from resources can be used if target directory already exists, otherwise absolute path from project root should be used.
-libSassParameters {
-  //Type: String Mandatory
-  //File path to compile (normally import other scss files)
-  //Can be overridden for production task
-  inputFilePath = "frontend/src/main/java/de/aboutflash/archerytime/client/scss/main.scss"
+/**
+ * Declare only the sources artifact for now.
+ */
+artifacts {
+  archives sourceJar
+}
 
-  //Type: String Mandatory
-  //Compiled file path
-  //Can be overridden for production task
-  outputFilePath = "frontend/src/main/resources/css/main.css"
+/**
+ * Compile scss to css.
+ */
+task compileSCSS {
+  final URI inputFile = file("src/main/java/de/aboutflash/archerytime/client/scss/main.scss").toURI()
+  final URI outputFile = file("src/main/generated/css/main.css").toURI()
 
-  //Directory to watch for continuous compilation
-  watchedDirectoryPath = "frontend/src/main/java/de/aboutflash/archerytime/client/"
+  final Compiler compiler = new Compiler()
+  final Options options = new Options()
+  final Output output = compiler.compileFile(inputFile, outputFile, options)
 
-  //Type: Boolean Default: false
-  //'true' embeds the source map as a data URI
-  //Can be overridden for production task
-  sourceMapEmbed = false
+  // Remove the charset declaration that confuses the JavaFX CSS parser.
+  final String css = output.getCss().replace("@charset \"UTF-8\";", "")
 
-  //Type: Boolean Default: false
-  //'true' enables additional debugging information in the output file as CSS comments
-  //Can be overridden for production task
-  //sourceComments = false
+  // Note: At this point, outputFile does not yet exist. So write it now...
+  def target = Paths.get(outputFile)
+  Files.createDirectories(target.parent)
+  Files.write(target, css.getBytes(StandardCharsets.UTF_8))
+}
 
-  //Type: Boolean Default: false
-  //'true' values disable the inclusion of source map information in the output file
-  //Can be overridden for production task
-  //omitSourceMappingURL = false
-
-  //Type: Boolean Default: false
-  //'true' includes the contents in the source map information
-  //Can be overridden for production task
-  //sourceMapContents = false
-
-  //Type: String Default: 'scss'
-  //Input syntax 'scss' or 'sass'
-  //Can be overridden for production task
-  //inputSyntax "scss"
-
-  //Type: Integer Default: 5
-  //Used to determine how many digits after the decimal will be allowed. For instance, if you had a decimal number of 1.23456789 and a precision of 5, the result will be 1.23457 in the final CSS.
-  //Can be overridden for production task
-  //precision 5
-
-  //Type: String
-  //Path of source file to generate if not embedded
-  //Can be overridden for production task
-  //sourceMapFilePath "css/output.css.map"
-
-  //Type: String Default: nested Values: nested, expanded, compact, compressed
-  //Determines the output format of the final CSS style.
-  //Can be overridden for production task
-  //outputStyle "nested"
-
-  //Type: String Default: ""
-  //Paths that LibSass can look in to attempt to resolve your @import declarations. When using data, it is recommended that you use this.
-  //';' is the path separator for Windows
-  //':' is the path separator for Linux
-  //Can be overridden for production task
-  //includePaths "scss-lib"
-
-  //Type: String
-  //Installation folder for bourbon sources
-  bourbonInstallationPath "scss"
-
-  //Type: String
-  //If a specific version of bourbon is necessary
-  //bourbonVersion "4.2.6"
-
-  //Type: String
-  //Installation folder for compass sources
-  compassInstallationPath "src/main/resources/scss"
-
-  //Type: String
-  //If a specific version of compass is necessary
-  //compassVersion "1.0.3"
-
-  //Override parameters for task "compileLibSassProduction"
-  libSassProductionParameters {
-    outputStyle "compressed"
-
-    outputFilePath = "frontend/src/main/generated/css/main.css"
+/**
+ * compass watcher task.
+ *
+ * Start compassWatch with:
+ * `./gradlew compassWatch -t`
+ */
+task compassWatch {
+  doLast {
+    compileSCSS
   }
+}
+
+compassWatch {
+  inputs.files fileTree(dir: 'src/main/java', include: '**/*.scss')
 }
 
 assemble.doLast {
-  compileLibSass
+  compileSCSS
 }
