@@ -41,11 +41,13 @@ buildscript {
     mavenLocal()
     mavenCentral()
     jcenter()
+    google()
   }
 
   dependencies {
     classpath JSASS_DEP
     classpath SHADOW_DEP
+    classpath ANDROID_DEP
   }
 }
 
