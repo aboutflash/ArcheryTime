@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ArcheryTime.iml" filepath="$PROJECT_DIR$/ArcheryTime.iml" />
-      <module fileurl="file://$PROJECT_DIR$/frontend/frontend.iml" filepath="$PROJECT_DIR$/frontend/frontend.iml" group="frontend" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/frontend/frontend_main.iml" filepath="$PROJECT_DIR$/.idea/modules/frontend/frontend_main.iml" group="frontend" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/frontend/frontend_test.iml" filepath="$PROJECT_DIR$/.idea/modules/frontend/frontend_test.iml" group="frontend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend.iml" filepath="$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend.iml" group="frontend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend_main.iml" filepath="$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend_main.iml" group="frontend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend_test.iml" filepath="$PROJECT_DIR$/.idea/modules/frontend/ArcheryTime-frontend_test.iml" group="frontend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IdeaProjects-ArcheryTime.iml" filepath="$PROJECT_DIR$/.idea/modules/IdeaProjects-ArcheryTime.iml" />
     </modules>
   </component>
 </project>
