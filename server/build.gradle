@@ -68,8 +68,6 @@ dependencies {
   // compile HTTPCLIENT_DEP
   // compile JSON_DEP
 
-  compile files('extralibs/install4j/install4j-runtime-6.1.5.jar')
-
   // TOOLING DEPENDENCIES
   testCompile HAMCREST_CORE_DEP
   testCompile HIBERNATE_VALIDATOR_DEP
