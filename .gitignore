@@ -14,6 +14,8 @@ Thumbs.db
 .idea/markdown-navigator.xml
 .idea/dataSources
 .idea/markdown-history.xml
+.idea/modules.xml
+.idea/.name
 
 # JIRA plugin
 atlassian-ide-plugin.xml
@@ -40,6 +42,7 @@ hs_err_pid*
 
 # generated files
 */src/main/generated
+gradle/wrapper/gradle-wrapper.properties
 .gradle
 **/build
 **/log
