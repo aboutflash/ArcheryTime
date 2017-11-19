@@ -15,6 +15,7 @@ Thumbs.db
 .idea/dataSources
 .idea/markdown-history.xml
 .idea/modules.xml
+.idea/workspace.xml
 .idea/.name
 
 # JIRA plugin
