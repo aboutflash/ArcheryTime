@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 
+
 group 'de.aboutflash.archerytime'
 
 apply plugin: 'java'
@@ -16,7 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-mainClassName = 'de.aboutflash.archerytime.client.main.ArcheryTime'
+mainClassName = 'de.aboutflash.archerytime.server.main.ArcheryTimeControlServer'
 
 repositories {
   mavenLocal()
@@ -47,15 +48,7 @@ buildscript {
   dependencies {
     classpath JSASS_DEP
     classpath SHADOW_DEP
-    classpath ANDROID_DEP
   }
-}
-
-/**
- * Ensure default
- */
-compileJava {
-  options.encoding = "UTF-8"
 }
 
 dependencies {
@@ -122,10 +115,10 @@ tasks.withType(Test) {
  * And, besides that, it excludes all cryptographic signature files by default.
  */
 task fatJar(type: ShadowJar, dependsOn: ['assemble', 'classes']) {
-  archiveName = "archerytime.jar"
+  archiveName = "archerytime-server.jar"
 
   manifest {
-    attributes "Main-Class": "de.aboutflash.archerytime.client.main.ArcheryTime"
+    attributes "Main-Class": "de.aboutflash.archerytime.client.main.ArcheryTimeControlServer"
   }
 
   from sourceSets.main.output.classesDirs
@@ -148,12 +141,11 @@ task fatJar(type: ShadowJar, dependsOn: ['assemble', 'classes']) {
 artifacts {
   archives sourceJar
 }
-
 /**
  * Compile scss to css.
  */
 task compileSCSS {
-  final URI inputFile = file("src/main/java/de/aboutflash/archerytime/client/scss/main.scss").toURI()
+  final URI inputFile = file("src/main/java/de/aboutflash/archerytime/server/scss/main.scss").toURI()
   final URI outputFile = file("src/main/generated/css/main.css").toURI()
 
   final Compiler compiler = new Compiler()
