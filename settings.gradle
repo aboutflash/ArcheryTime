@@ -2,5 +2,6 @@ rootProject.name = 'ArcheryTime'
 
 include \
   'frontend',
-  'server'
+  'server',
+  'common'
 

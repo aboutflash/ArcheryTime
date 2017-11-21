@@ -60,7 +60,7 @@ compileJava {
 
 dependencies {
   // Internal dependencies
-  // compile project(':public-model-api')
+  compile project(':common')
 
   // Utilities
   compile COMMONS_LANG3_DEP

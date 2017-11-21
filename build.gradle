@@ -42,18 +42,6 @@ allprojects {
     mavenCentral()
     jcenter()
   }
-
-  //  apply plugin: "checkstyle"
-  //
-  //  checkstyle {
-  //    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
-  //    configProperties = ['baseDir': "$rootProject.projectDir"]
-  //  }
-  //
-  //  dependencies {
-  //    checkstyle CHECKSTYLE_DEP
-  //    checkstyle CHECKSTYLE_IDEA_EXTENSION_DEP
-  //  }
 }
 
 
@@ -70,10 +58,11 @@ subprojects {
   task allDependencies(type: DependencyReportTask) {}
 
   dependencies {
-    testCompile project(':frontend')
+    compile project(':common')
 
     compile JSR305_DEP
 
+    testCompile project(':common')
     testCompile JUNIT_DEP
     testCompile LOGBACK_CLASSIC_DEP
     testCompile HAMCREST_ALL_DEP

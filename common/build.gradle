@@ -1,0 +1,65 @@
+group 'de.aboutflash.archerytime'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    all*.exclude group: 'log4j', module: 'log4j'
+}
+
+
+tasks.withType(Exec) {
+    doFirst {
+        println commandLine
+    }
+}
+
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath JSASS_DEP
+        classpath SHADOW_DEP
+        classpath ANDROID_DEP
+    }
+}
+
+/**
+ * Ensure default
+ */
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+dependencies {
+    // Utilities
+    compile COMMONS_LANG3_DEP
+
+    // For CLI parsing
+    compile COMMONS_CLI_DEP
+
+    // For logging
+    compile REFLECTIONS_DEP
+
+    // TOOLING DEPENDENCIES
+    testCompile HAMCREST_CORE_DEP
+    testCompile JUNIT_DEP
+    testCompile LOG4J_OVER_SLF4J_DEP
+    testCompile LOGBACK_CLASSIC_DEP
+    testCompile MOCKITO_CORE_DEP
+    testCompile TRUTH_DEP
+}
