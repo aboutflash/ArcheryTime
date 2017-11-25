@@ -1,7 +1,6 @@
 rootProject.name = 'ArcheryTime'
 
-include \
-  'frontend',
-  'server',
-  'common'
-
+include 'common'
+include 'server'
+include 'frontend'
+include 'playground'

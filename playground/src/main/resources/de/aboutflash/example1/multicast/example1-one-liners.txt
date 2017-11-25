@@ -1,0 +1,18 @@
+The interesting change is how the DatagramPacket
+is constructed, in particular, the InetAddress
+and port used to construct the DatagramPacket.
+Recall that the previous example retrieved the
+InetAddress and port number from the packet sent
+to the server from the client. This was because
+the server needed to reply directly to the client.
+Now, the server needs to address multiple clients.
+So this time both the InetAddress and the port
+number are hard-coded.
+The hard-coded port number is 4446 (the client must
+have a MulticastSocket bound to this port).
+The hard-coded InetAddress of the DatagramPacket
+is "203.0.113.0" and is a group identifier (rather
+than the Internet address of the machine on which
+a single client is running).
+This particular address was arbitrarily chosen
+from the reserved for this purpose.

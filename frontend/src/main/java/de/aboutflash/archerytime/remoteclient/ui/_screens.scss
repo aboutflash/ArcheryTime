@@ -1,0 +1,28 @@
+@import "../scss/colors";
+@import "../scss/fonts";
+
+.startup-screen {
+  .text {
+    @include fontStartup($color-font);
+  }
+  -fx-background-color: $color-bg-startup;
+}
+
+.stop-screen {
+  .text {
+    @include fontCounter($color-font);
+  }
+  -fx-background-color: $color-bg-stop;
+}
+
+.count-down-screen {
+  .text {
+    @include fontCounter($color-font);
+  }
+  -fx-background-color: $color-bg-shooting;
+
+  //noinspection CssInvalidPseudoSelector
+  &:up30 {
+    -fx-background-color: $color-bg-shooting-30;
+  }
+}

@@ -58,11 +58,8 @@ subprojects {
   task allDependencies(type: DependencyReportTask) {}
 
   dependencies {
-    compile project(':common')
-
     compile JSR305_DEP
 
-    testCompile project(':common')
     testCompile JUNIT_DEP
     testCompile LOGBACK_CLASSIC_DEP
     testCompile HAMCREST_ALL_DEP
@@ -190,6 +187,5 @@ subprojects {
   clean.doLast({
     file(generatedSourcesHome).deleteDir()
   })
-
 
 }

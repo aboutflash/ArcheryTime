@@ -1,0 +1,74 @@
+/*!!! This must be exactly the name of the font file, otherwise it will simply not display
+Windows File Properties > Details > Title
+*/
+$font-family-din1451: "DIN 1451 Mittelschrift";
+$font-family-bahn-regular: "Bahnschrift";
+$font-family-bahn-bold: "Bahnschrift Bold";
+$font-family-source-variable: "Source Sans Variable";
+$font-family-arial-black: "Arial Black";
+/************************************************
+  font declarations
+************************************************/
+
+@font-face {
+  font-family: $font-family-din1451;
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/din1451m.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: $font-family-arial-black;
+  font-style: normal;
+  font-weight: bold;
+  src: url('/fonts/ariblk.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: $font-family-bahn-regular;
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/bahnschrift.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: $font-family-bahn-bold;
+  font-style: normal;
+  font-weight: bold;
+  src: url('/fonts/bahnschrift.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: $font-family-source-variable;
+  //font-style: normal;
+  //font-weight: bold;
+  font-face-name: "Source Sans Variable";
+  src: url('/fonts/SourceSansVariable-Roman.ttf') format('truetype');
+}
+
+$label-size-countdown: 660px;
+$label-size-target: 150px;
+$label-size-text: 24px;
+
+@mixin font($family, $color, $size) {
+  -fx-font-family: $family;
+
+  @if $color {
+    -fx-text-fill: $color;
+    -fx-fill: $color; // this is needed for text nodes
+  }
+
+  -fx-font-size: $size;
+}
+
+@mixin fontStartup($color: $color-font) {
+  @include font($font-family-arial-black, $color, $label-size-text);
+}
+
+@mixin fontCounter($color: $color-font) {
+  @include font($font-family-din1451, $color, $label-size-countdown);
+}
+
+@mixin fontTargets($color: $color-font) {
+  @include font($font-family-source-variable, $color, $label-size-target);
+}

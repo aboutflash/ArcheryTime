@@ -3,7 +3,7 @@ package de.aboutflash.archerytime.client.main;
 import de.aboutflash.archerytime.client.model.CountdownModel;
 import de.aboutflash.archerytime.client.model.StateMachine;
 import de.aboutflash.archerytime.client.ui.CountDownScreen;
-import de.aboutflash.archerytime.client.ui.StopScreen;
+import de.aboutflash.archerytime.remoteclient.ui.StopScreen;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;

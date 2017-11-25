@@ -150,9 +150,27 @@ artifacts {
 /**
  * Compile scss to css.
  */
+
 task compileSCSS {
   final URI inputFile = file("src/main/java/de/aboutflash/archerytime/client/scss/main.scss").toURI()
   final URI outputFile = file("src/main/generated/css/main.css").toURI()
+
+  final Compiler compiler = new Compiler()
+  final Options options = new Options()
+  final Output output = compiler.compileFile(inputFile, outputFile, options)
+
+  // Remove the charset declaration that confuses the JavaFX CSS parser.
+  final String css = output.getCss().replace("@charset \"UTF-8\";", "")
+
+  // Note: At this point, outputFile does not yet exist. So write it now...
+  def target = Paths.get(outputFile)
+  Files.createDirectories(target.parent)
+  Files.write(target, css.getBytes(StandardCharsets.UTF_8))
+}
+
+task compileRemoteclientSCSS {
+  final URI inputFile = file("src/main/java/de/aboutflash/archerytime/remoteclient/scss/display.scss").toURI()
+  final URI outputFile = file("src/main/generated/css/display.css").toURI()
 
   final Compiler compiler = new Compiler()
   final Options options = new Options()
