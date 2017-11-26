@@ -1,4 +1,4 @@
-package de.aboutflash.example5.udpbroadcast;
+package de.aboutflash.example6.socekttest;
 
 /**
  * Class
@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class SocketTest {
+  private static final int RESPONSE_PORT = 101010;
+
   public static void main(String[] args) throws IOException {
 
     startServer();
@@ -23,7 +25,7 @@ public class SocketTest {
       @Override
       public void run() {
         try {
-          Socket s = new Socket("localhost", TransmissionThread.RESPONSE_PORT);
+          Socket s = new Socket("localhost", RESPONSE_PORT);
           BufferedWriter out = new BufferedWriter(
               new OutputStreamWriter(s.getOutputStream()));
 
@@ -52,7 +54,7 @@ public class SocketTest {
       public void run() {
         ServerSocket ss;
         try {
-          ss = new ServerSocket(TransmissionThread.RESPONSE_PORT);
+          ss = new ServerSocket(RESPONSE_PORT);
 
           Socket s = ss.accept();
 
