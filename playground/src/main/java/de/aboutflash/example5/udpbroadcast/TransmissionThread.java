@@ -2,43 +2,43 @@ package de.aboutflash.example5.udpbroadcast;
 
 import de.aboutflash.net.InetSubnetDetector;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.logging.Logger;
 
 /**
- * Class
+ * Base class for sender/receiver threads.
  *
  * @author falk@aboutflash.de on 25.11.2017.
  */
-public class TransmissionThread extends Thread {
+@SuppressWarnings("WeakerAccess")
+abstract public class TransmissionThread extends Thread {
 
-  final static int TX_BUF_SIZE_BYTES = 0xff;
+  private final static Logger LOG = Logger.getAnonymousLogger();
+  final static int RECEIVE_BUFFER_SIZE_BYTES = 0x1000;
   final static int RESPONSE_PORT = 10101;
   final static String DISCOVERY_IDENTIFIER = "BROADCAST_ARCHERY_TIME_CONTROL_SERVER_V0.0.1";
 
-  protected DatagramSocket socket;
-  protected InetAddress address;
+  private final InetAddress subnetAddress;
+  private final InetAddress localAddress;
 
 
-  public TransmissionThread() throws UnknownHostException, SocketException {
+  protected TransmissionThread() throws UnknownHostException, SocketException {
     setDaemon(true);
-    address = InetSubnetDetector.getSubnetBroadcastAddress();
-    System.out.println(address.getHostAddress());
+
+    localAddress = InetSubnetDetector.getLocalAddress();
+    LOG.info(localAddress.getHostAddress());
+
+    subnetAddress = InetSubnetDetector.getSubnetBroadcastAddress();
+    LOG.info(subnetAddress.getHostAddress());
   }
 
-  @Override
-  public void run() {
-    try {
-      initializeSocketForBroadcasting();
-    } catch (SocketException ignored) { }
+  public InetAddress getSubnetAddress() {
+    return subnetAddress;
   }
 
-  protected void initializeSocketForBroadcasting() throws SocketException {
-    socket = new DatagramSocket();
-    socket.setBroadcast(true);
+  public InetAddress getLocalAddress() {
+    return localAddress;
   }
-
-
 }

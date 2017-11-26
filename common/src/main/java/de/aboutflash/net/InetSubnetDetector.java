@@ -24,6 +24,13 @@ public final class InetSubnetDetector {
   /**
    * Gets the broadcast address of the local subnet.
    */
+  public static InetAddress getLocalAddress() throws UnknownHostException, SocketException {
+    return InetAddress.getByAddress(discoverBroadcastAddress().getAddress());
+  }
+
+  /**
+   * Gets the broadcast address of the local subnet.
+   */
   public static InetAddress getSubnetBroadcastAddress() throws UnknownHostException, SocketException {
     return InetAddress.getByAddress(getBroadcastAddress());
   }

@@ -1,57 +1,72 @@
 package de.aboutflash.example5.udpbroadcast;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class
  *
  * @author falk@aboutflash.de on 24.11.2017.
  */
+@SuppressWarnings({"Duplicates", "WeakerAccess"})
 public class ListenerThread extends TransmissionThread {
 
-  private InetAddress serverIp;
+  private final Logger log;
+  private long announcementCount;
 
-  public ListenerThread() throws UnknownHostException, SocketException { }
+  public ListenerThread() throws UnknownHostException, SocketException {
+    log = Logger.getLogger("Listener Thread");
+    log.setLevel(Level.INFO);
+  }
 
   @Override
   public void run() {
-    super.run();
-
     detectServer();
   }
 
+  @SuppressWarnings("ObjectAllocationInLoop")
   private void detectServer() {
 
-    //Wait for a response
-    byte[] buffer = new byte[TX_BUF_SIZE_BYTES];
+    byte[] buffer = new byte[RECEIVE_BUFFER_SIZE_BYTES];
+    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, getLocalAddress(), RESPONSE_PORT);
 
-    DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+    try (DatagramSocket socket = new DatagramSocket(packet.getPort(), packet.getAddress())) {
+      socket.setBroadcast(true);
 
-    do {
-      try {
-        socket.receive(receivePacket);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      System.out.println(receivePacket.getAddress().getHostAddress());
-      //We have received data
+      do {
+        try {
 
-      //Check if the message is correct
-      String message = StringUtils.trimToEmpty(new String(receivePacket.getData()).trim());
+          socket.receive(packet);
+          processData(packet);
 
-      if (message.equals(DISCOVERY_IDENTIFIER)) {
-        serverIp = receivePacket.getAddress();
-        System.out.printf("server found: %s", serverIp.getHostAddress());
-      }
+        } catch (IOException ignored) { }
 
-    } while (true);
+      } while (true);
 
+    } catch (SocketException ignored) { }
+
+  }
+
+  private void processData(DatagramPacket packet) {
+    final String s = new String(packet.getData()).trim();
+
+    if (isAnnouncement(s)) {
+      serverAnnouncementReceived();
+    }
+  }
+
+  private boolean isAnnouncement(String message) {
+    return message.equals(DISCOVERY_IDENTIFIER);
+  }
+
+  private void serverAnnouncementReceived() {
+    announcementCount++;
+    log.info(String.format("Announcements received: %12d", announcementCount));
   }
 
 }

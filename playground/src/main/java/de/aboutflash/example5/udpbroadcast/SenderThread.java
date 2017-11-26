@@ -2,56 +2,61 @@ package de.aboutflash.example5.udpbroadcast;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.logging.Logger;
 
 /**
  * Class
  *
  * @author falk@aboutflash.de on 25.11.2017.
  */
+@SuppressWarnings("WeakerAccess")
 public class SenderThread extends TransmissionThread {
 
-  private static final long DISCOVERY_INTERVAL_MILLIS = 1_000L;
+  private static final long DISCOVERY_INTERVAL_MILLIS = 1_00L;
+  private final Logger log;
   private long announcementCount;
 
-  public SenderThread() throws UnknownHostException, SocketException { }
+  public SenderThread() throws UnknownHostException, SocketException {
+    log = Logger.getLogger(getClass().getName());
+  }
 
 
   @Override
   public void run() {
-    super.run();
-
     announceServer();
   }
 
+  @SuppressWarnings({"BusyWait", "NestedTryStatement", "InfiniteLoopStatement"})
   private void announceServer() {
-
     byte[] sendData = DISCOVERY_IDENTIFIER.getBytes();
-    try {
-      address = InetAddress.getByAddress(new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff});
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    }
-    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, RESPONSE_PORT);
 
-    do {
-      try {
-        //Send server announcement
-        socket.send(sendPacket);
-        System.out.printf("sent announcements count: %12d %n", announcementCount++);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    try (DatagramSocket s = new DatagramSocket()) {
+      s.setBroadcast(true);
 
-      try {
-        sleep(DISCOVERY_INTERVAL_MILLIS);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getSubnetAddress(), RESPONSE_PORT);
 
-    } while (true);
+      do {
+        try {
+          //Send server announcement
+          s.send(sendPacket);
+          announcementCount++;
+          log.info(toString());
+
+          sleep(DISCOVERY_INTERVAL_MILLIS);
+
+        } catch (IOException | InterruptedException ignored) { }
+
+      } while (true);
+
+    } catch (SocketException ignored) { }
+
   }
 
+  @Override
+  public String toString() {
+    return String.format("Sender: announced server %12d times %n", announcementCount);
+  }
 }
