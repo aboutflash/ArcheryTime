@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class SocketTest {
-  private static final int RESPONSE_PORT = 101010;
+  private static final int RESPONSE_PORT = 10101;
 
   public static void main(String[] args) throws IOException {
 
