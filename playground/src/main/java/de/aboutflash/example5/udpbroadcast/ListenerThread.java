@@ -21,7 +21,7 @@ public class ListenerThread extends TransmissionThread {
 
   public ListenerThread() throws UnknownHostException, SocketException {
     log = Logger.getLogger("Listener Thread");
-    log.setLevel(Level.INFO);
+    log.setLevel(Level.FINE);
   }
 
   @Override
@@ -44,11 +44,15 @@ public class ListenerThread extends TransmissionThread {
           socket.receive(packet);
           processData(packet);
 
-        } catch (IOException ignored) { }
+        } catch (IOException e) {
+          log.severe(e.getMessage());
+        }
 
       } while (true);
 
-    } catch (SocketException ignored) { }
+    } catch (SocketException e) {
+      log.severe(e.getMessage());
+    }
 
   }
 

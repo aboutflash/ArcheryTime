@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("WeakerAccess")
 public class SenderThread extends TransmissionThread {
 
-  private static final long DISCOVERY_INTERVAL_MILLIS = 1_00L;
+  private static final long DISCOVERY_INTERVAL_MILLIS = 1_000L;
   private final Logger log;
   private long announcementCount;
 
@@ -47,11 +47,15 @@ public class SenderThread extends TransmissionThread {
 
           sleep(DISCOVERY_INTERVAL_MILLIS);
 
-        } catch (IOException | InterruptedException ignored) { }
+        } catch (IOException | InterruptedException e) {
+          log.severe(e.getMessage());
+        }
 
       } while (true);
 
-    } catch (SocketException ignored) { }
+    } catch (SocketException e) {
+      log.severe(e.getMessage());
+    }
 
   }
 
