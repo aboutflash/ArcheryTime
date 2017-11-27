@@ -1,4 +1,4 @@
-package de.aboutflash.example5.udpbroadcast;
+package de.aboutflash.example6.socekttest;
 
 /**
  * Working example of a sender and a receiver thread.

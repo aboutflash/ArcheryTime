@@ -2,6 +2,7 @@ package de.aboutflash.archerytime.remoteclient.app;
 
 import de.aboutflash.archerytime.remoteclient.model.CountdownViewModel;
 import de.aboutflash.archerytime.remoteclient.model.StartupViewModel;
+import de.aboutflash.archerytime.remoteclient.net.Listener;
 import de.aboutflash.archerytime.remoteclient.ui.CountDownScreen;
 import de.aboutflash.archerytime.remoteclient.ui.StartupScreen;
 import de.aboutflash.archerytime.remoteclient.ui.StopScreen;
@@ -24,6 +25,7 @@ public class ArcheryTimeDisplay extends Application {
   private final Pane rootPane = new StackPane();
   private Stage primaryStage = null;
 
+  private Listener listener;
   private StartupViewModel startupViewModel;
   private CountdownViewModel countdownViewModel;
 
@@ -40,6 +42,8 @@ public class ArcheryTimeDisplay extends Application {
     primaryStage.show();
 
     setUserAgentStylesheet("css/display.css");
+
+    listener = new Listener();
 
 //    enterFullScreenMode();
     showStartup();
