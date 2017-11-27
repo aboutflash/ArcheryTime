@@ -48,6 +48,8 @@ compileJava {
 dependencies {
     // Utilities
     compile COMMONS_LANG3_DEP
+    compile JACKSON_DATABIND_DEP
+    compile JACKSON_DATATYPE_JSR310_DEP
 
     // For CLI parsing
     compile COMMONS_CLI_DEP
