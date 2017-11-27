@@ -15,8 +15,7 @@ public class JSONObjectSerializer implements ObjectSerializer {
 
   private ObjectMapper screenStateMapper;
 
-  public void init() {
-
+  public JSONObjectSerializer() {
     // create jackson mapper with custom serializers for {@link ScreenState}
     screenStateMapper = new ObjectMapper();
 

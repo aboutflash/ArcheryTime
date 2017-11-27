@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import de.aboutflash.archerytime.model.ScreenState;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -70,20 +69,6 @@ abstract class BasicDeserializer<T> extends StdDeserializer<T> {
       return defaultValue;
     }
     return node.get(name).asBoolean();
-  }
-
-  /**
-   * Parses a {@link ScreenState} from the JSON node or returns the default value if not present.
-   */
-  @Nullable
-  protected ScreenState readScreenState(
-      JsonNode node, String name, @Nullable ScreenState defaultValue) {
-    if (!node.has(name)) {
-      return defaultValue;
-    }
-    final String label = node.get(name).asText();
-    final ScreenState screenState = new ScreenState(label);
-    return screenState;
   }
 
 }

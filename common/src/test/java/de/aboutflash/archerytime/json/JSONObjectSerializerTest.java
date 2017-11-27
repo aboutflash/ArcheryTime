@@ -1,18 +1,42 @@
 package de.aboutflash.archerytime.json;
 
+import de.aboutflash.archerytime.model.ScreenState;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static de.aboutflash.archerytime.model.ScreenState.Screen.MESSAGE;
+import static de.aboutflash.archerytime.model.ScreenState.Screen.SHOOT_T30;
+import static de.aboutflash.archerytime.model.ScreenState.Sequence.AB;
 
 public class JSONObjectSerializerTest {
+
+  JSONObjectSerializer jos;
+
+  @Before
+  public void setUp() throws Exception {
+    jos = new JSONObjectSerializer();
+  }
+
   @Test
   public void serializeScreenState() throws Exception {
-    fail();
+    String json;
+
+    json = jos.serializeScreenState(new ScreenState(MESSAGE, "Alice likes Bob"));
+    System.out.println(json);
+
+    json = jos.serializeScreenState(new ScreenState(SHOOT_T30, AB, 120));
+    System.out.println(json);
   }
 
   @Test
   public void deserializeScreenState() throws Exception {
-    fail();
+    ScreenState obj;
+
+    obj = jos.deserializeScreenState("{\"scr\":\"MESSAGE\",\"msg\":\"Alice likes Bob\"}");
+    System.out.println(obj);
+
+    obj = jos.deserializeScreenState("{\"scr\":\"SHOOT_T30\",\"seq\":\"AB\",\"time\":120}");
+    System.out.println(obj);
   }
 
 
