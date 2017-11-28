@@ -1,5 +1,11 @@
 package de.aboutflash.archerytime.remoteclient.net;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
+
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+
 /**
  * Class
  *
@@ -7,21 +13,21 @@ package de.aboutflash.archerytime.remoteclient.net;
  */
 public final class Listener {
 
-  private Thread listenerThread;
+  private final ExecutorService executorService;
 
   public Listener() {
-
-    try {
-      listenerThread = new ListenerThread();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+    executorService = newSingleThreadExecutor();
     runForever();
   }
 
+  public void stop() {
+    executorService.shutdownNow();
+  }
+
   private void runForever() {
-    listenerThread.run();
+    try {
+      executorService.submit(new ListenerThread());
+    } catch (UnknownHostException | SocketException ignored) { }
   }
 
 }

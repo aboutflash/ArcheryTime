@@ -7,6 +7,7 @@ import de.aboutflash.archerytime.remoteclient.ui.CountDownScreen;
 import de.aboutflash.archerytime.remoteclient.ui.StartupScreen;
 import de.aboutflash.archerytime.remoteclient.ui.StopScreen;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -34,6 +35,12 @@ public class ArcheryTimeDisplay extends Application {
   public void start(final Stage stage) throws Exception {
 
     primaryStage = stage;
+    primaryStage.setOnCloseRequest(e -> {
+      listener.stop();
+      Platform.exit();
+      System.exit(0);
+    });
+
     primaryStage.setWidth(DEFAULT_SIZE.getWidth());
     primaryStage.setHeight(DEFAULT_SIZE.getHeight());
 
@@ -49,6 +56,10 @@ public class ArcheryTimeDisplay extends Application {
     showStartup();
   }
 
+  @Override
+  public void stop() throws Exception {
+    System.out.println();
+  }
 
   private void enterFullScreenMode() {
     primaryStage.setFullScreen(true);

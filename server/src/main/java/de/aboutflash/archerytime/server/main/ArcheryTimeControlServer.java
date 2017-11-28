@@ -3,6 +3,7 @@ package de.aboutflash.archerytime.server.main;
 import de.aboutflash.archerytime.server.model.FITACycleModel;
 import de.aboutflash.archerytime.server.net.Announcer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 /**
@@ -21,6 +22,12 @@ public class ArcheryTimeControlServer extends Application {
 
   @Override
   public void start(final Stage primaryStage) throws Exception {
+    primaryStage.setOnCloseRequest(e -> {
+      announcer.stop();
+      Platform.exit();
+      System.exit(0);
+    });
+
     model = new FITACycleModel();
     announceServer();
   }
