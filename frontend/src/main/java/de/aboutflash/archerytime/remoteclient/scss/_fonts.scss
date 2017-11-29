@@ -46,9 +46,9 @@ $font-family-arial-black: "Arial Black";
   src: url('/fonts/SourceSansVariable-Roman.ttf') format('truetype');
 }
 
-$label-size-countdown: 660px;
-$label-size-target: 150px;
-$label-size-text: 24px;
+$label-size-countdown: 27.5em;
+$label-size-target: 6.25em;
+$label-size-text: 2em;
 
 @mixin font($family, $color, $size) {
   -fx-font-family: $family;

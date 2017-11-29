@@ -15,11 +15,16 @@
   -fx-background-color: $color-bg-stop;
 }
 
-.count-down-screen {
+.countdown-screen {
   .text {
     @include fontCounter($color-font);
   }
   -fx-background-color: $color-bg-shooting;
+
+  //noinspection CssInvalidPseudoSelector
+  &:steady {
+    -fx-background-color: $color-bg-steady;
+  }
 
   //noinspection CssInvalidPseudoSelector
   &:up30 {

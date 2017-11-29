@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static de.aboutflash.archerytime.model.ScreenState.Screen.MESSAGE;
-import static de.aboutflash.archerytime.model.ScreenState.Screen.SHOOT_T30;
+import static de.aboutflash.archerytime.model.ScreenState.Screen.SHOOT_UP30;
 import static de.aboutflash.archerytime.model.ScreenState.Sequence.AB;
 
 public class JSONObjectSerializerTest {
@@ -24,7 +24,7 @@ public class JSONObjectSerializerTest {
     json = jos.serializeScreenState(new ScreenState(MESSAGE, "Alice likes Bob"));
     System.out.println(json);
 
-    json = jos.serializeScreenState(new ScreenState(SHOOT_T30, AB, 120));
+    json = jos.serializeScreenState(new ScreenState(SHOOT_UP30, AB, 120));
     System.out.println(json);
   }
 

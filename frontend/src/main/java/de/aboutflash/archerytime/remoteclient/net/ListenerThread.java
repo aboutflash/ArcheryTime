@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,9 +24,11 @@ public class ListenerThread extends TransmissionThread {
   private final Logger log;
 
   private final JSONObjectSerializer serializer;
+  private final Consumer<ScreenState> screenStateConsumer;
   private long datagramCount;
 
-  public ListenerThread() throws UnknownHostException, SocketException {
+  public ListenerThread(final Consumer<ScreenState> screenStateConsumer) throws UnknownHostException, SocketException {
+    this.screenStateConsumer = screenStateConsumer;
     serializer = new JSONObjectSerializer();
     log = Logger.getLogger("Listener Thread");
     log.setLevel(Level.FINE);
@@ -67,7 +70,8 @@ public class ListenerThread extends TransmissionThread {
     final String s = new String(packet.getData()).trim();
     final ScreenState screenState = serializer.deserializeScreenState(s);
     if (!screenState.getScreen().equals(ScreenState.Screen.INVALID)) {
-      log.info(screenState.toString());
+      log.info("RECEIVED: "+ screenState);
+      screenStateConsumer.accept(screenState);
       screenStateReceived();
     }
   }

@@ -13,10 +13,10 @@ import javafx.scene.layout.StackPane;
 public class CountDownScreen extends StackPane {
   @SuppressWarnings("WeakerAccess")
   public static final String DEFAULT_STYLE_CLASS = "countdown-screen";
-  private final CountdownViewModel viewModel;
+  private final CountdownViewModel model;
 
   public CountDownScreen(CountdownViewModel viewModel) {
-    this.viewModel = viewModel;
+    model = viewModel;
     getStyleClass().add(DEFAULT_STYLE_CLASS);
 
     final Label connecting = new Label(viewModel.getTimeFormatted());

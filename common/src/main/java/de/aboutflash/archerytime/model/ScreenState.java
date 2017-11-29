@@ -78,7 +78,7 @@ public class ScreenState implements Serializable {
     STOP,
     STEADY,
     SHOOT,
-    SHOOT_T30,
+    SHOOT_UP30,
   }
 
   @SuppressWarnings("PublicInnerClass")

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("WeakerAccess")
 public class AnnounceThread extends TransmissionThread {
 
-  private static final long ANNOUNCE_INTERVAL_MILLIS = 1_000L;
+  private static final long ANNOUNCE_INTERVAL_MILLIS = 200L;
   private final Logger log;
 
   private final JSONObjectSerializer serializer;
@@ -41,15 +41,16 @@ public class AnnounceThread extends TransmissionThread {
 
   @SuppressWarnings({"BusyWait", "NestedTryStatement", "InfiniteLoopStatement", "Duplicates"})
   private void announceServer() {
-    byte[] sendData = getSerializedData().getBytes();
 
     try (DatagramSocket socket = new DatagramSocket()) {
       socket.setBroadcast(true);
 
-      DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getSubnetAddress(), RESPONSE_PORT);
 
       do {
         try {
+          byte[] sendData = getSerializedData().getBytes();
+          DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getSubnetAddress(), RESPONSE_PORT);
+
           //Send server announcement
           socket.send(sendPacket);
           announcementCount++;
@@ -71,7 +72,7 @@ public class AnnounceThread extends TransmissionThread {
 
   @Override
   public String toString() {
-    return String.format("Sender: announced server %12d times %n", announcementCount);
+    return String.format("%nSender: announced server %12d times", announcementCount);
   }
 
   private String getSerializedData() {

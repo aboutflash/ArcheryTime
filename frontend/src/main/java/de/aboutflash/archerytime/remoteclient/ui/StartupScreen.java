@@ -20,10 +20,9 @@ public class StartupScreen extends StackPane {
     this.viewModel = viewModel;
     getStyleClass().add(DEFAULT_STYLE_CLASS);
 
-    final Label connecting = new Label("finding server");
+    final Label connecting = new Label("(- waiting for server -)");
 
     final Label attempts = new Label("");
-    attempts.textProperty().bind(viewModel.attemptsProperty().asString("attempts %d"));
 
     final VBox vBox = new VBox(connecting, attempts);
     vBox.setAlignment(Pos.CENTER);
