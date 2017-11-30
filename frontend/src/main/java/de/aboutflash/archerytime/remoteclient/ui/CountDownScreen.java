@@ -17,9 +17,13 @@ public class CountDownScreen extends StackPane {
 
   public CountDownScreen(CountdownViewModel viewModel) {
     model = viewModel;
-    getStyleClass().add(DEFAULT_STYLE_CLASS);
 
-    final Label connecting = new Label(viewModel.getTimeFormatted());
+    getStyleClass().add(DEFAULT_STYLE_CLASS);
+    drawUi();
+  }
+
+  private void drawUi() {
+    final Label connecting = new Label(model.getTimeFormatted());
     getChildren().add(connecting);
     StackPane.setAlignment(connecting, Pos.CENTER);
   }

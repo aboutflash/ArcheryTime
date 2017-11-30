@@ -40,8 +40,8 @@ $font-family-arial-black: "Arial Black";
 
 @font-face {
   font-family: $font-family-source-variable;
-  //font-style: normal;
-  //font-weight: bold;
+  font-style: normal;
+  font-weight: bold;
   font-face-name: "Source Sans Variable";
   src: url('/fonts/SourceSansVariable-Roman.ttf') format('truetype');
 }
@@ -51,7 +51,7 @@ $label-size-target: 6.25em;
 $label-size-text: 2em;
 
 @mixin font($family, $color, $size) {
-  -fx-font-family: $family;
+  -fx-font-family: $family, "Arial", "Helvetica", sans-serif;
 
   @if $color {
     -fx-text-fill: $color;

@@ -16,7 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-mainClassName = 'de.aboutflash.archerytime.client.main.ArcheryTime'
+mainClassName = 'de.aboutflash.archerytime.remoteclient.app.ArcheryTimeDisplay'
 
 repositories {
   mavenLocal()
@@ -194,6 +194,7 @@ task compileRemoteclientSCSS {
 task compassWatch {
   doLast {
     compileSCSS
+    compileRemoteclientSCSS
   }
 }
 
@@ -203,4 +204,5 @@ compassWatch {
 
 assemble.doLast {
   compileSCSS
+  compileRemoteclientSCSS
 }
