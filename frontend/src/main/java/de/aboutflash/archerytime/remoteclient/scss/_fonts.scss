@@ -1,6 +1,7 @@
 /*!!! This must be exactly the name of the font file, otherwise it will simply not display
 Windows File Properties > Details > Title
 */
+$font-family-roboto-black: "Roboto Black";
 $font-family-din1451: "DIN 1451 Mittelschrift";
 $font-family-bahn-regular: "Bahnschrift";
 $font-family-bahn-bold: "Bahnschrift Bold";
@@ -11,17 +12,17 @@ $font-family-arial-black: "Arial Black";
 ************************************************/
 
 @font-face {
-  font-family: $font-family-din1451;
+  font-family: $font-family-roboto-black;
   font-style: normal;
-  font-weight: normal;
-  src: url('/fonts/din1451m.ttf') format('truetype');
+  font-weight: bold;
+  src: url('/fonts/roboto-black.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: $font-family-arial-black;
+  font-family: $font-family-din1451;
   font-style: normal;
   font-weight: bold;
-  src: url('/fonts/ariblk.ttf') format('truetype');
+  src: url('/fonts/din1451m.ttf') format('truetype');
 }
 
 @font-face {
@@ -51,7 +52,7 @@ $label-size-target: 6.25em;
 $label-size-text: 2em;
 
 @mixin font($family, $color, $size) {
-  -fx-font-family: $family, "Arial", "Helvetica", sans-serif;
+  -fx-font-family: $family, sans-serif;
 
   @if $color {
     -fx-text-fill: $color;
@@ -62,11 +63,11 @@ $label-size-text: 2em;
 }
 
 @mixin fontStartup($color: $color-font) {
-  @include font($font-family-arial-black, $color, $label-size-text);
+  @include font($font-family-roboto-black, $color, $label-size-text);
 }
 
 @mixin fontCounter($color: $color-font) {
-  @include font($font-family-din1451, $color, $label-size-countdown);
+  @include font($font-family-roboto-black, $color, $label-size-countdown);
 }
 
 @mixin fontTargets($color: $color-font) {
