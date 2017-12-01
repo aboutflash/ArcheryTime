@@ -14,17 +14,20 @@ import javafx.scene.layout.VBox;
 public class StartupScreen extends StackPane {
   @SuppressWarnings("WeakerAccess")
   public static final String DEFAULT_STYLE_CLASS = "startup-screen";
-  private final StartupViewModel viewModel;
+  private final StartupViewModel model;
 
   public StartupScreen(StartupViewModel viewModel) {
-    this.viewModel = viewModel;
+    model = viewModel;
+
     getStyleClass().add(DEFAULT_STYLE_CLASS);
+    drawUi();
+  }
 
-    final Label connecting = new Label("(- waiting for server -)");
+  private void drawUi() {
+    final Label connecting = new Label();
+    connecting.textProperty().bind(model.messageProperty());
 
-    final Label attempts = new Label("");
-
-    final VBox vBox = new VBox(connecting, attempts);
+    final VBox vBox = new VBox(connecting);
     vBox.setAlignment(Pos.CENTER);
     StackPane.setAlignment(vBox, Pos.CENTER);
 

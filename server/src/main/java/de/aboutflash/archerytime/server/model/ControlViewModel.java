@@ -13,7 +13,7 @@ public class ControlViewModel {
   public ControlViewModel() {
   }
 
-  private final StringProperty status = new SimpleStringProperty("%status");
+  private final StringProperty status = new SimpleStringProperty();
 
   public String getStatus() {
     return status.get();

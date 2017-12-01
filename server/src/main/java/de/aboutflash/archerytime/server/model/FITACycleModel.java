@@ -1,98 +1,21 @@
 package de.aboutflash.archerytime.server.model;
 
 import de.aboutflash.archerytime.model.ScreenState;
-import javafx.collections.ObservableList;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static javafx.collections.FXCollections.observableArrayList;
 
 /**
  * Class
  *
- * @author falk@aboutflash.de on 27.11.2017.
+ * @author falk@aboutflash.de on 01.12.2017.
  */
-public class FITACycleModel {
+public interface FITACycleModel {
+  double getRemainingTimeMillis();
 
-  private static final double MILLIS_TO_SECONDS = 0.001;
+  void setRemainingTimeMillis(double value);
 
-  private final static double SIM_ROUND_TIME = 10_000.0;
-  private final AtomicInteger iterations = new AtomicInteger(0);
-  private final TimerTask simulationTask;
-  private final Timer simulationTimer;
+  void decreaseRemainingTime(double milliseconds);
 
-  public FITACycleModel() {
-    simulationTimer = new Timer();
+  int getRemainingTimeSeconds();
 
-    simulationTask = new TimerTask() {
-      @Override
-      public void run() {
-        iterations.addAndGet(1);
-        decreaseRemainingTime(100);
+  ScreenState getScreenState();
 
-        System.out.print('.');
-
-        if (remainingTimeMillis <= 0.0) {
-          remainingTimeMillis = SIM_ROUND_TIME;
-          randomScreen = getRandomScreen();
-          randomSequence = getRandomSequence();
-        }
-      }
-    };
-
-    simulationTimer.scheduleAtFixedRate(simulationTask, 1_000, 100);
-  }
-
-  private volatile double remainingTimeMillis = SIM_ROUND_TIME;
-
-  public synchronized double getRemainingTimeMillis() {
-    return remainingTimeMillis;
-  }
-
-  public synchronized void setRemainingTimeMillis(double value) {
-    remainingTimeMillis = value;
-  }
-
-  public synchronized void decreaseRemainingTime(double milliseconds) {
-    remainingTimeMillis -= milliseconds;
-  }
-
-  public int getRemainingTimeSeconds() {
-    return (int) Math.floor(getRemainingTimeMillis() * MILLIS_TO_SECONDS);
-  }
-
-  private volatile ScreenState.Screen randomScreen = getRandomScreen();
-  private ScreenState.Screen getRandomScreen() {
-    final ObservableList<ScreenState.Screen> screens = observableArrayList(
-        ScreenState.Screen.STOP,
-        ScreenState.Screen.STEADY,
-        ScreenState.Screen.SHOOT,
-        ScreenState.Screen.SHOOT_UP30
-    );
-
-    final int idx = (int) Math.floor(Math.random() * (double) (screens.size()));
-    return screens.get(idx);
-  }
-
-  private volatile ScreenState.Sequence randomSequence = getRandomSequence();
-  private ScreenState.Sequence getRandomSequence() {
-    final ObservableList<ScreenState.Sequence> sequences = observableArrayList(
-        ScreenState.Sequence.A,
-        ScreenState.Sequence.B,
-        ScreenState.Sequence.AB,
-        ScreenState.Sequence.BA
-    );
-
-    final int idx = (int) Math.floor(Math.random() * (double) (sequences.size()));
-    return sequences.get(idx);
-  }
-
-
-  public synchronized ScreenState getScreenState() {
-    final ScreenState screenState = new ScreenState(randomScreen, randomSequence, getRemainingTimeSeconds());
-    System.out.printf("%nIterations: %10d  -->>  %s%n", iterations.get(), screenState);
-    return screenState;
-  }
 }

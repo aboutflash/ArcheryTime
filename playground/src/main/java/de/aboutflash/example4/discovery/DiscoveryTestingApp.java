@@ -1,7 +1,5 @@
 package de.aboutflash.example4.discovery;
 
-import de.aboutflash.archerytime.remoteclient.model.StartupViewModel;
-
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +21,6 @@ public class DiscoveryTestingApp {
   }
 
   private static DiscoClient discoClient;
-  private static StartupViewModel startupViewModel = new StartupViewModel();
 
   @SuppressWarnings({"MagicNumber", "UseOfSystemOutOrSystemErr", "BusyWait"})
   private static void discoverServer() {
@@ -38,7 +35,7 @@ public class DiscoveryTestingApp {
           InetAddress serverIp = null;
           while (serverIp == null && attempts.get() < 10) {
 
-            attempts.set(startupViewModel.nextAttempt());
+            attempts.addAndGet(1);
             serverIp = discoClient.getServerIp();
 
             try {

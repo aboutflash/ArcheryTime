@@ -11,18 +11,18 @@ import javafx.scene.layout.StackPane;
  */
 public class ControlScreen extends StackPane {
   public static final String DEFAULT_STYLE_CLASS = "control-screen";
-  private final ControlViewModel viewModel;
+  private final ControlViewModel model;
   private final Label status = new Label();
 
-  public ControlScreen(ControlViewModel model) {
-    viewModel = model;
+  public ControlScreen(ControlViewModel viewModel) {
+    model = viewModel;
 
     getStyleClass().add(DEFAULT_STYLE_CLASS);
     drawUi();
   }
 
   private void drawUi() {
-    status.textProperty().bind(viewModel.statusProperty());
+    status.textProperty().bind(model.statusProperty());
     getChildren().add(status);
   }
 

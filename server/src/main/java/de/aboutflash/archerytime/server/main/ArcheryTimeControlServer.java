@@ -2,6 +2,7 @@ package de.aboutflash.archerytime.server.main;
 
 import de.aboutflash.archerytime.server.model.ControlViewModel;
 import de.aboutflash.archerytime.server.model.FITACycleModel;
+import de.aboutflash.archerytime.server.model.FITACycleModelSimulation;
 import de.aboutflash.archerytime.server.net.Announcer;
 import de.aboutflash.archerytime.server.ui.ControlScreen;
 import javafx.application.Application;
@@ -10,6 +11,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class
@@ -33,8 +37,9 @@ public class ArcheryTimeControlServer extends Application {
 
   @Override
   public void init() throws Exception {
-    model = new FITACycleModel();
+    model = new FITACycleModelSimulation();
     announceServer();
+    observeModel();
   }
 
   private void announceServer() {
@@ -70,6 +75,22 @@ public class ArcheryTimeControlServer extends Application {
   private void showControlScreen() {
     controlViewModel = new ControlViewModel();
     rootPane.getChildren().setAll(new ControlScreen(controlViewModel));
+  }
+
+  // for debugging
+
+  private void observeModel() {
+    new Timer().scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        Platform.runLater(() -> updateUi());
+      }
+    }, 0, 100);
+  }
+
+  private void updateUi() {
+    if (controlViewModel != null)
+      controlViewModel.setStatus(model.getScreenState().toString());
   }
 
 }
