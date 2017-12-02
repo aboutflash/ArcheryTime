@@ -91,7 +91,7 @@ public class FITACycleModelSimulation implements FITACycleModel {
         ScreenState.Sequence.A,
         ScreenState.Sequence.B,
         ScreenState.Sequence.AB,
-        ScreenState.Sequence.BA
+        ScreenState.Sequence.CD
     );
 
     final int idx = (int) Math.floor(Math.random() * (double) (sequences.size()));
@@ -102,7 +102,6 @@ public class FITACycleModelSimulation implements FITACycleModel {
   @Override
   public synchronized ScreenState getScreenState() {
     final ScreenState screenState = new ScreenState(randomScreen, randomSequence, getRemainingTimeSeconds());
-    System.out.printf("%nIterations: %10d  -->>  %s%n", iterations.get(), screenState);
     return screenState;
   }
 

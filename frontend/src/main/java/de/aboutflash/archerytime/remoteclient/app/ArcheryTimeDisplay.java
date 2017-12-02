@@ -13,6 +13,8 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -114,8 +116,9 @@ public class ArcheryTimeDisplay extends Application {
 
     layout();
 
-    // enterFullScreenMode();
+    enterFullScreenMode();
     showStartup();
+    registerHotKeys();
   }
 
   private void layout() {
@@ -149,8 +152,35 @@ public class ArcheryTimeDisplay extends Application {
     return factor;
   }
 
+  private void registerHotKeys() {
+    // fullscreen F
+    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+      if (event.getCode() == KeyCode.F) {
+        if (primaryStage.isFullScreen())
+          exitFullScreenMode();
+        else
+          enterFullScreenMode();
+        event.consume();
+      }
+    });
+
+    // exit Ctrl-C
+    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+      if (event.getCode() == KeyCode.C
+          && event.isControlDown()) {
+        Platform.exit();
+        System.exit(0);
+      }
+    });
+  }
+
+
   private void enterFullScreenMode() {
     primaryStage.setFullScreen(true);
+  }
+
+  private void exitFullScreenMode() {
+    primaryStage.setFullScreen(false);
   }
 
   private void showMessage(String message) {

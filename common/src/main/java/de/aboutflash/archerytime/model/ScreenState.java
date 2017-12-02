@@ -87,6 +87,6 @@ public class ScreenState implements Serializable {
     A,
     B,
     AB,
-    BA,
+    CD,
   }
 }

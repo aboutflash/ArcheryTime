@@ -2,11 +2,6 @@
 Windows File Properties > Details > Title
 */
 $font-family-roboto-black: "Roboto Black";
-$font-family-din1451: "DIN 1451 Mittelschrift";
-$font-family-bahn-regular: "Bahnschrift";
-$font-family-bahn-bold: "Bahnschrift Bold";
-$font-family-source-variable: "Source Sans Variable";
-$font-family-arial-black: "Arial Black";
 /************************************************
   font declarations
 ************************************************/
@@ -18,37 +13,7 @@ $font-family-arial-black: "Arial Black";
   src: url('/fonts/roboto-black.ttf') format('truetype');
 }
 
-@font-face {
-  font-family: $font-family-din1451;
-  font-style: normal;
-  font-weight: bold;
-  src: url('/fonts/din1451m.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: $font-family-bahn-regular;
-  font-style: normal;
-  font-weight: normal;
-  src: url('/fonts/bahnschrift.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: $font-family-bahn-bold;
-  font-style: normal;
-  font-weight: bold;
-  src: url('/fonts/bahnschrift.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: $font-family-source-variable;
-  font-style: normal;
-  font-weight: bold;
-  font-face-name: "Source Sans Variable";
-  src: url('/fonts/SourceSansVariable-Roman.ttf') format('truetype');
-}
-
 $label-size-countdown: 22em;
-$label-size-target: 6.25em;
 $label-size-text: 2em;
 
 @mixin font($family, $color, $size) {
@@ -68,8 +33,4 @@ $label-size-text: 2em;
 
 @mixin fontCounter($color: $color-font) {
   @include font($font-family-roboto-black, $color, $label-size-countdown);
-}
-
-@mixin fontTargets($color: $color-font) {
-  @include font($font-family-source-variable, $color, $label-size-target);
 }

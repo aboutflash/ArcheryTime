@@ -39,7 +39,7 @@ public class CountDownScreen extends StackPane {
 
   private Node createSequenceDisplay() {
     final SequenceDisplay sequenceDisplay = new SequenceDisplay();
-    sequenceDisplay.sequenceProperty.bind(model.getSequenceProperty());
+    sequenceDisplay.sequenceProperty().bind(model.getSequenceProperty());
     HBox.setHgrow(sequenceDisplay, Priority.NEVER);
     return sequenceDisplay;
   }
@@ -56,7 +56,8 @@ public class CountDownScreen extends StackPane {
     final StackPane counterBox = new StackPane(counterShade, counter);
     StackPane.setAlignment(counter, Pos.CENTER_RIGHT);
     StackPane.setAlignment(counterShade, Pos.CENTER_RIGHT);
-    HBox.setHgrow(counterBox, Priority.ALWAYS);
+
+    HBox.setHgrow(counterBox, Priority.SOMETIMES);
     return counterBox;
   }
 }
