@@ -212,36 +212,16 @@ assemble.doLast {
 }
 
 
-apply plugin: 'javafx-gradle-plugin'
-
+//apply plugin: 'javafx-gradle-plugin'
+//
 // configure javafx-gradle-plugin
 // for all available settings please look at the class "JavaFXGradlePluginExtension"
-jfx {
-//  verbose = true
-  mainClass = "de.aboutflash.archerytime.remoteclient.app.ArcheryTimeDisplay"
-  vendor = "falk@aboutflash.de"
-
-//gradle jfxJar
-  preLoader = null // String
-  css2bin = false
-  updateExistingJar = false
-  allPermissions = false
-  manifestAttributes = null // Map<String, String>
-  addPackagerJar = true
-  copyAdditionalAppResourcesToJar = true
-  skipCopyingDependencies = false
-  useLibFolderContentForManifestClasspath = false
-  fixedManifestClasspath = null
-
 //jfx {
+////  verbose = true
 //  mainClass = "de.aboutflash.archerytime.remoteclient.app.ArcheryTimeDisplay"
-//  jfxAppOutputDir = "build/jfx/app"
-//  jfxMainAppJarName = "display.jar"
-//  deployDir = "out/artifacts/archerytime"
-//  useEnvironmentRelativeExecutables = true
-//  libFolderName = "lib"
+//  vendor = "falk@aboutflash.de"
 //
-//  // gradle jfxJar
+////gradle jfxJar
 //  preLoader = null // String
 //  css2bin = false
 //  updateExistingJar = false
@@ -252,14 +232,36 @@ jfx {
 //  skipCopyingDependencies = false
 //  useLibFolderContentForManifestClasspath = false
 //  fixedManifestClasspath = null
-//
-//  // gradle jfxNative
-//  identifier = null
-//  // String - setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
-//  vendor = "aboutflash.de"
-//  nativeOutputDir = "build/jfx/native"
-//  bundler = "windows.app"
-//  // set this to some specific, if your don't want all bundlers running, examples "windows.app", "jnlp", ...
+//}
+
+///*
+//jfx {
+//  mainClass = "de.aboutflash.archerytime.remoteclient.app.ArcheryTimeDisplay"
+//  jfxAppOutputDir = "build/jfx/app"
+//  jfxMainAppJarName = "display.jar"
+//  deployDir = "out/artifacts/archerytime"
+//  useEnvironmentRelativeExecutables = true
+//  libFolderName = "lib"
+////
+////  // gradle jfxJar
+////  preLoader = null // String
+//  css2bin = false
+//  updateExistingJar = false
+//  allPermissions = false
+//  manifestAttributes = null // Map<String, String>
+//  addPackagerJar = true
+//  copyAdditionalAppResourcesToJar = true
+//  skipCopyingDependencies = false
+//  useLibFolderContentForManifestClasspath = false
+//  fixedManifestClasspath = null
+////
+////  // gradle jfxNative
+////  identifier = null
+////  // String - setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
+////  vendor = "aboutflash.de"
+////  nativeOutputDir = "build/jfx/native"
+////  bundler = "windows.app"
+////  // set this to some specific, if your don't want all bundlers running, examples "windows.app", "jnlp", ...
 //  jvmProperties = null // Map<String, String>
 //  jvmArgs = null // List<String>
 //  userJvmArgs = null // Map<String, String>
@@ -268,7 +270,7 @@ jfx {
 //  needShortcut = false
 //  needMenu = false
 //  bundleArguments = [
-//    // dont bundle JRE (not recommended, but increases build-size/-speed)
+////    // dont bundle JRE (not recommended, but increases build-size/-speed)
 //    runtime: null
 //  ]
 //  appName = "archerytime-display"
@@ -287,7 +289,7 @@ jfx {
 //  skipNativeVersionNumberSanitizing = false // anything than numbers or dots are removed
 //  additionalJarsignerParameters = null // List<String>
 //  skipMainClassScanning = false // set to true might increase build-speed
-//
+////
 //  skipNativeLauncherWorkaround124 = false
 //  skipNativeLauncherWorkaround167 = false
 //  skipNativeLauncherWorkaround205 = false
@@ -295,32 +297,33 @@ jfx {
 //  skipSigningJarFilesJNLP185 = false
 //  skipSizeRecalculationForJNLP185 = false
 //  skipMacBundlerWorkaround = false
-//
-//  // gradle jfxRun
+////
+////  // gradle jfxRun
 //  runJavaParameter = null // String
 //  runAppParameter = null // String
-//
-//  // per default the outcome of the gradle "jarTask" will be used, set this to specify otherwise (like proguard-output)
+////
+////  // per default the outcome of the gradle "jarTask" will be used, set this to specify otherwise (like proguard-output)
 //  alternativePathToJarFile = null // String
-//
-//  // to disable patching of ant-javafx.jar, set this to false
+////
+////  // to disable patching of ant-javafx.jar, set this to false
 //  usePatchedJFXAntLib = true
-//
-//  // making it able to support absolute paths, defaults to "false" for maintaining old behaviour
+////
+////  // making it able to support absolute paths, defaults to "false" for maintaining old behaviour
 //  checkForAbsolutePaths = false
-//
-//  // gradle jfxGenerateKeyStore
-//  keyStore = "src/main/deploy/keystore.jks"
-//  keyStoreAlias = "myalias"
-//  keyStorePassword = "password"
-//  keyPassword = null // will default to keyStorePassword
-//  keyStoreType = "jks"
-//  overwriteKeyStore = false
-//
-//  certDomain = null // required
-//  certOrgUnit = null // defaults to "none"
-//  certOrg = null // required
-//  certState = null // required
-//  certCountry = null // required
-//
-}
+////
+////  // gradle jfxGenerateKeyStore
+////  keyStore = "src/main/deploy/keystore.jks"
+////  keyStoreAlias = "myalias"
+////  keyStorePassword = "password"
+////  keyPassword = null // will default to keyStorePassword
+////  keyStoreType = "jks"
+////  overwriteKeyStore = false
+////
+////  certDomain = null // required
+////  certOrgUnit = null // defaults to "none"
+////  certOrg = null // required
+////  certState = null // required
+////  certCountry = null // required
+////
+//*/
+//}
