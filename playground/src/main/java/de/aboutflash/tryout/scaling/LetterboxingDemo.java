@@ -7,6 +7,7 @@ package de.aboutflash.tryout.scaling;
  */
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
@@ -41,8 +42,10 @@ public class LetterboxingDemo extends Application {
     stage.setScene(scene);
     stage.show();
 
-    letterbox(scene, root);
-    stage.setFullScreen(true);
+    Platform.runLater(() -> {
+      letterbox(scene, root);
+      stage.setFullScreen(true);
+    });
   }
 
   private StackPane createPane() {
